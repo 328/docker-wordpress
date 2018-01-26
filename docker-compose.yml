@@ -1,0 +1,33 @@
+version: "2"
+services:
+    wordpress:
+        image: wordpress:4.7.0
+        container_name: wordpress
+        ports:
+            - "9000:80"
+        depends_on:
+            - db
+        environment:
+            WORDPRESS_DB_HOST: "db:3306"
+        env_file: .env
+        networks:
+          wp-network:
+            ipv4_address: 172.16.30.10
+    db:
+        image: mysql:latest
+        container_name: mysql
+        env_file: .env
+        networks:
+          wp-network:
+            ipv4_address: 172.16.30.20
+        ports:
+            - "3306:3306"
+
+networks:
+  wp-network:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+      - subnet: 172.16.30.0/24
+        gateway: 172.16.30.1
